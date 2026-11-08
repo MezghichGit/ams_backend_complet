@@ -1,0 +1,45 @@
+HELP.md
+
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### ServiceArticle ###
+ServiceArticle.factorypath
+ServiceArticle.classpath
+ServiceArticle.project
+ServiceArticle.target/
+ServiceArticle.mvn/
+ServiceArticle.settings/
+
+### ServiceProvider ###
+ServiceProvider.factorypath
+ServiceProvider.classpath
+ServiceProvider.project
+ServiceProvider.target/
+ServiceProvider.mvn/
+ServiceProvider.settings/
+
+### ServiceProxy ###
+ServiceProxy.factorypath
+ServiceProxy.classpath
+ServiceProxy.project
+ServiceProxy.target/
+ServiceProxy.mvn/
+ServiceProxy.settings/
+
+### ServiceRegistry ###
+ServiceRegistry.factorypath
+ServiceRegistry.classpath
+ServiceRegistry.project
+ServiceRegistry.target/
+ServiceRegistry.mvn/
+ServiceRegistry.settings/
+
+### ServiceConfiguration ###
+ServiceConfiguration.factorypath
+ServiceConfiguration.classpath
+ServiceConfiguration.project
+ServiceConfiguration.target/
+ServiceConfiguration.mvn/
+ServiceConfiguration.settings/
