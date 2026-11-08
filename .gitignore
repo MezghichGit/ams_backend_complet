@@ -43,3 +43,4 @@ ServiceConfiguration.project
 ServiceConfiguration.target/
 ServiceConfiguration.mvn/
 ServiceConfiguration.settings/
+/.metadata/

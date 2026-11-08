@@ -1,0 +1,94 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"        # 3307 côté PC pour ne pas entrer en conflit avec un MySQL local
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  service-configuration:
+    build: ./ServiceConfiguration
+    container_name: service-configuration
+    ports:
+      - "8881:8881"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8881/PROVIDER-SERVICE/docker"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+
+  service-registry:
+    build: ./ServiceRegistry
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8761/"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+
+  service-provider:
+    build: ./ServiceProvider
+    container_name: service-provider
+    ports:
+      - "8001:8001"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://service-configuration:8881
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-configuration:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+
+  service-article:
+    build: ./ServiceArticle
+    container_name: service-article
+    ports:
+      - "8002:8002"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://service-configuration:8881
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-configuration:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+
+  service-proxy:
+    build: ./ServiceProxy
+    container_name: service-proxy
+    ports:
+      - "9191:9191"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://service-configuration:8881
+    depends_on:
+      service-configuration:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+      service-provider:
+        condition: service_started
+      service-article:
+        condition: service_started
+
+volumes:
+  mysql-data:
